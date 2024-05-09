@@ -31,3 +31,7 @@ flutter:
     # Add assets from the images directory to the application.
     - assets/data/data.json
     - assets/images/
+  fonts:
+    - family:  CustomIcons
+      fonts:
+       - asset: assets/fonts/CustomIcons.ttf

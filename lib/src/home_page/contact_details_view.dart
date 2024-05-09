@@ -1,4 +1,5 @@
 import 'package:contacts/src/components/avatar.dart';
+import 'package:contacts/src/components/icons.dart';
 import 'package:contacts/src/utils/contact.dart';
 import 'package:flutter/material.dart';
 // Import JSON encoder/decoder
@@ -39,7 +40,7 @@ class _ContactDetailsViewState extends State<ContactDetailsView> {
               const SizedBox(height: 20),
               const MainActionButtonRow(),
               const SizedBox(height: 20),
-              ContactCard(
+              InfoCard(
                 dat: data,
                 cardName: "Contact info",
               )
@@ -51,8 +52,8 @@ class _ContactDetailsViewState extends State<ContactDetailsView> {
   }
 }
 
-class ContactCard extends StatelessWidget {
-  const ContactCard({
+class InfoCard extends StatelessWidget {
+  const InfoCard({
     super.key,
     required this.dat,
     required this.cardName,
@@ -88,15 +89,21 @@ class ContactCard extends StatelessWidget {
                   return InfoItem(
                     context,
                     () {
-                      print(method == "call" ? "Call" : "Mail");
+                      print(method);
                     },
-                    Icons.call_outlined,
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.message_outlined),
-                    ),
+                    method == "phone"
+                        ? Icons.call_outlined
+                        : category == "cusat"
+                            ? CustomIcons.cusatSimple
+                            : Icons.mail_outline,
                     item.value,
                     category,
+                    method != "mail"
+                        ? IconButton(
+                            onPressed: () {},
+                            icon: const Icon(CustomIcons.whatsapp),
+                          )
+                        : const SizedBox(),
                   );
                 })
           ],
@@ -110,9 +117,9 @@ Row InfoItem(
   BuildContext context,
   VoidCallback onTap,
   IconData primaryIcon,
-  Widget secondary,
   String detail,
   String hint,
+  Widget? secondaryIcon,
 ) {
   return Row(
     children: [
@@ -138,7 +145,7 @@ Row InfoItem(
           ),
         ),
       ),
-      secondary
+      secondaryIcon ?? secondaryIcon!
     ],
   );
 }
@@ -181,53 +188,59 @@ class MainActionButtonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        hintedActionButton(
-          context,
-          Icons.call_outlined,
-          "Call",
+        HintedActionButton(
+          icon: Icons.call_outlined,
+          hintText: "Call",
         ),
-        const SizedBox(width: 35),
-        hintedActionButton(
-          context,
-          Icons.message_outlined,
-          "Message",
+        SizedBox(width: 35),
+        HintedActionButton(
+          icon: CustomIcons.whatsapp,
+          hintText: "WhatsApp",
         )
       ],
     );
   }
 }
 
-Column hintedActionButton(
-  BuildContext context,
-  IconData icon,
-  String hintText,
-) {
-  return Column(
-    children: [
-      Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          color: Theme.of(context).colorScheme.onSecondary,
-        ),
-        child: IconButton(
-          onPressed: () => {},
-          icon: Icon(
-            icon,
-            size: 25,
-            color: Theme.of(context).colorScheme.onBackground,
+class HintedActionButton extends StatelessWidget {
+  const HintedActionButton({
+    super.key,
+    required this.icon,
+    required this.hintText,
+  });
+
+  final IconData icon;
+  final String hintText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
+          child: IconButton(
+            onPressed: () => {},
+            icon: Icon(
+              icon,
+              size: 25,
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
           ),
         ),
-      ),
-      const SizedBox(height: 3),
-      Text(
-        hintText,
-        style: const TextStyle(fontSize: 13),
-      ),
-    ],
-  );
+        const SizedBox(height: 3),
+        Text(
+          hintText,
+          style: const TextStyle(fontSize: 13),
+        ),
+      ],
+    );
+  }
 }
