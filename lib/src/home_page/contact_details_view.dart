@@ -82,23 +82,22 @@ class InfoCard extends StatelessWidget {
                 itemCount: dat.contactMethods.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  ContactMethod item = dat.contactMethods[index];
+                  ContactSection item = dat.contactMethods[index];
                   var type = item.type.split("-");
                   var method = type[0];
                   var category = type[1];
                   return InfoItem(
-                    context,
-                    () {
+                    onTap: () {
                       print(method);
                     },
-                    method == "phone"
+                    primaryIcon: method == "phone"
                         ? Icons.call_outlined
                         : category == "cusat"
                             ? CustomIcons.cusatSimple
                             : Icons.mail_outline,
-                    item.value,
-                    category,
-                    method != "mail"
+                    detail: item.value,
+                    hint: category,
+                    secondaryIcon: method != "mail"
                         ? IconButton(
                             onPressed: () {},
                             icon: const Icon(CustomIcons.whatsapp),
@@ -113,63 +112,84 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-Row InfoItem(
-  BuildContext context,
-  VoidCallback onTap,
-  IconData primaryIcon,
-  String detail,
-  String hint,
-  Widget? secondaryIcon,
-) {
-  return Row(
-    children: [
-      Expanded(
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(
-                    primaryIcon,
-                    size: 25,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                  const SizedBox(width: 8),
-                  columnDetail(context, detail, hint),
-                ],
+class InfoItem extends StatelessWidget {
+  const InfoItem({
+    super.key,
+    required this.onTap,
+    required this.primaryIcon,
+    required this.detail,
+    required this.hint,
+    required this.secondaryIcon,
+  });
+
+  final VoidCallback onTap;
+  final IconData primaryIcon;
+  final String detail, hint;
+  final Widget secondaryIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Icon(
+                      primaryIcon,
+                      size: 25,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                    const SizedBox(width: 8),
+                    ColumnDetail(detail: detail, hint: hint),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-      secondaryIcon ?? secondaryIcon!
-    ],
-  );
+        secondaryIcon
+      ],
+    );
+  }
 }
 
-Padding columnDetail(BuildContext context, String detail, String hint) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 8.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          detail,
-          softWrap: true,
-        ),
-        Text(
-          hint,
-          style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.secondary,
+class ColumnDetail extends StatelessWidget {
+  const ColumnDetail({
+    super.key,
+    required this.detail,
+    required this.hint,
+  });
+
+  final String detail, hint;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            detail,
+            softWrap: true,
           ),
-        ),
-      ],
-    ),
-  );
+          Text(
+            hint,
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 Center headingTextName(BuildContext context, String name) {

@@ -11,15 +11,16 @@ Future<dynamic> readJson(String path) async {
 List<Contact> parseData(data) {
   List<Contact> list = [];
   for (int i = 0; i < data.length; i++) {
-    List methods_ = data[i]["contactMethods"];
-    List<ContactMethod> methods = [];
-    for (var element in methods_) {
-      methods.add(ContactMethod(data: element));
+    List sections_ = data[i]["sections"];
+    List<ContactSection> sections = [];
+    for (var section in sections_) {
+      sections
+          .add(ContactSection(title: section["title"], data: section["data"]));
     }
     list.add(Contact(
       name: data[i]["name"],
       profileURL: data[i]["profileURL"],
-      contactMethods: methods,
+      sections: sections,
     ));
   }
   return list;
